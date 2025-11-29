@@ -1,16 +1,16 @@
-# react-spinner-prize-wheel
+# react-spin-prize
 
 🎡 Modern, fully customizable prize wheel spinner component for React with TypeScript support.
 
-[![npm version](https://img.shields.io/npm/v/react-spinner-prize-wheel.svg)](https://www.npmjs.com/package/react-spinner-prize-wheel)
-[![npm downloads](https://img.shields.io/npm/dm/react-spinner-prize-wheel.svg)](https://www.npmjs.com/package/react-spinner-prize-wheel)
-[![license](https://img.shields.io/npm/l/react-spinner-prize-wheel.svg)](https://github.com/joshuaolusayo/react-spinner-prize-wheel/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/react-spin-prize.svg)](https://www.npmjs.com/package/react-spin-prize)
+[![npm downloads](https://img.shields.io/npm/dm/react-spin-prize.svg)](https://www.npmjs.com/package/react-spin-prize)
+[![license](https://img.shields.io/npm/l/react-spin-prize.svg)](https://github.com/joshuaolusayo/react-spin-prize/blob/main/LICENSE)
 
 ## 🎮 Live Demo
 
-- **GitHub Pages**: [https://joshuaolusayo.github.io/react-spinner-prize-wheel/](https://joshuaolusayo.github.io/react-spinner-prize-wheel/)
-- **CodeSandbox**: [Try it online](https://codesandbox.io/s/react-spinner-prize-wheel)
-- **StackBlitz**: [Edit in browser](https://stackblitz.com/edit/react-spinner-prize-wheel)
+- **GitHub Pages**: [https://joshuaolusayo.github.io/react-spin-prize/](https://joshuaolusayo.github.io/react-spin-prize/)
+- **CodeSandbox**: [Try it online](https://codesandbox.io/s/react-spin-prize)
+- **StackBlitz**: [Edit in browser](https://stackblitz.com/edit/react-spin-prize)
 
 ## Features
 
@@ -24,17 +24,17 @@
 ## Installation
 
 ```bash
-npm install react-spinner-prize-wheel
+npm install react-spin-prize
 # or
-yarn add react-spinner-prize-wheel
+yarn add react-spin-prize
 # or
-pnpm add react-spinner-prize-wheel
+pnpm add react-spin-prize
 ```
 
 ## Usage
 
 ```tsx
-import { SpinnerWheel } from 'react-spinner-prize-wheel';
+import { SpinnerWheel } from 'react-spin-prize';
 
 const items = [
   { id: 1, label: 'Prize 1', color: '#FF6B6B' },
