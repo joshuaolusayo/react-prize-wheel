@@ -78,6 +78,7 @@ function App() {
 | `disabled` | `boolean` | false | Disable the spin button |
 | `winningIndex` | `number` | - | Force a specific winner (for testing) |
 | `autoSpinTrigger` | `string \| number \| boolean \| null` | - | Change this value to trigger a programmatic spin |
+| `textLayout` | `'radial' \| 'horizontal'` | 'horizontal' | Text layout style: 'radial' for rotating text, 'horizontal' for edge-to-center text |
 
 ## SpinnerWheelItem
 
@@ -121,6 +122,15 @@ interface SpinnerWheelItem {
     // Make API call or perform any action when button is clicked
     await fetchSpinData();
   }}
+  onSpinComplete={(item) => {
+    console.log('Winner:', item);
+  }}
+/>
+
+// Horizontal text layout (edge-to-center)
+<SpinnerWheel
+  items={items}
+  textLayout="horizontal"
   onSpinComplete={(item) => {
     console.log('Winner:', item);
   }}

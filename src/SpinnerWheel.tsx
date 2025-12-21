@@ -27,6 +27,7 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
   disabled = false,
   winningIndex,
   autoSpinTrigger,
+  textLayout = "horizontal",
 }) => {
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -169,28 +170,80 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
         "Z",
       ].join(" ");
 
-      // Text position
-      const textRadius = items.length > 30 ? wheelRadius * 0.65
-        : items.length > 20 ? wheelRadius * 0.68
-        : wheelRadius * 0.7;
+      // Text position and rendering based on layout
+      let textElement: JSX.Element;
 
-      const textX = centerX + textRadius * Math.cos(midAngle);
-      const textY = centerY + textRadius * Math.sin(midAngle);
-      const textAngle = (midAngle * 180) / Math.PI + 90;
+      if (textLayout === "horizontal") {
+        // Horizontal layout: text starts from edge towards center
+        const outerTextRadius = wheelRadius * 0.85;
+        const innerTextRadius = wheelRadius * 0.35;
 
-      // Truncate long labels
-      let displayLabel = item.label;
-      if (items.length > 30 && displayLabel.length > 8) {
-        displayLabel = displayLabel.substring(0, 7) + "...";
-      } else if (items.length > 20 && displayLabel.length > 12) {
-        displayLabel = displayLabel.substring(0, 11) + "...";
-      } else if (items.length > 12 && displayLabel.length > 15) {
-        displayLabel = displayLabel.substring(0, 14) + "...";
-      }
+        // Calculate start position (at the edge)
+        const startX = centerX + outerTextRadius * Math.cos(midAngle);
+        const startY = centerY + outerTextRadius * Math.sin(midAngle);
 
-      return (
-        <g key={item.id}>
-          <path d={pathData} fill={getColor(index)} stroke={borderColor} strokeWidth={1} />
+        // Calculate end position (towards center)
+        const endX = centerX + innerTextRadius * Math.cos(midAngle);
+        const endY = centerY + innerTextRadius * Math.sin(midAngle);
+
+        // Text path for horizontal text
+        const textPathId = `textPath-${item.id}`;
+
+        // Truncate long labels
+        let displayLabel = item.label;
+        if (items.length > 30 && displayLabel.length > 8) {
+          displayLabel = displayLabel.substring(0, 7) + "...";
+        } else if (items.length > 20 && displayLabel.length > 12) {
+          displayLabel = displayLabel.substring(0, 11) + "...";
+        } else if (items.length > 12 && displayLabel.length > 15) {
+          displayLabel = displayLabel.substring(0, 14) + "...";
+        }
+
+        textElement = (
+          <>
+            <defs>
+              <path
+                id={textPathId}
+                d={`M ${startX} ${startY} L ${endX} ${endY}`}
+              />
+            </defs>
+            <text
+              fill={getTextColor(index)}
+              fontSize={dynamicFontSize}
+              fontWeight="bold"
+              style={{ userSelect: "none", pointerEvents: "none" }}
+            >
+              <textPath
+                href={`#${textPathId}`}
+                startOffset="50%"
+                textAnchor="middle"
+              >
+                {displayLabel}
+              </textPath>
+            </text>
+          </>
+        );
+      } else {
+        // Radial layout (default): rotating text
+        const textRadius = items.length > 30 ? wheelRadius * 0.65
+          : items.length > 20 ? wheelRadius * 0.68
+          : wheelRadius * 0.7;
+
+        const textX = centerX + textRadius * Math.cos(midAngle);
+        const textY = centerY + textRadius * Math.sin(midAngle);
+        const textAngle = (midAngle * 180) / Math.PI + 90;
+
+        // Truncate long labels
+        let displayLabel = item.label;
+        if (items.length > 30 && displayLabel.length > 8) {
+          displayLabel = displayLabel.substring(0, 7) + "...";
+        } else if (items.length > 20 && displayLabel.length > 12) {
+          displayLabel = displayLabel.substring(0, 11) + "...";
+        } else if (items.length > 12 && displayLabel.length > 15) {
+          displayLabel = displayLabel.substring(0, 14) + "...";
+        }
+
+        textElement = (
           <text
             x={textX}
             y={textY}
@@ -204,6 +257,13 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
           >
             {displayLabel}
           </text>
+        );
+      }
+
+      return (
+        <g key={item.id}>
+          <path d={pathData} fill={getColor(index)} stroke={borderColor} strokeWidth={1} />
+          {textElement}
         </g>
       );
     });

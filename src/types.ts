@@ -25,4 +25,5 @@ export interface SpinnerWheelProps {
   disabled?: boolean;
   winningIndex?: number;
   autoSpinTrigger?: string | number | boolean | null;
+  textLayout?: "radial" | "horizontal"; // "radial" = rotating text, "horizontal" = horizontal text from edge to center (default)
 }

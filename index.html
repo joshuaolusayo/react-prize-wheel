@@ -353,7 +353,8 @@ function App() {
             buttonBorderColor = '#FFD700',
             buttonBorderWidth = 4,
             disabled = false,
-            winningIndex
+            winningIndex,
+            textLayout = 'horizontal'
         }) {
             const [rotation, setRotation] = useState(0);
             const [spinning, setSpinning] = useState(false);
@@ -450,13 +451,40 @@ function App() {
                     <div style={{ position: 'relative', width: size, height: size }}>
                         <svg width={size} height={size} style={{ transform: `rotate(${rotation}deg)`, transition: 'none' }}>
                             {items.map((item, index) => {
-                                const textPos = getTextPosition(index);
                                 const color = item.color || `hsl(${(index * 360) / items.length}, 70%, 60%)`;
                                 const textColor = item.textColor || '#fff';
+                                const displayLabel = item.label.length > 15 ? item.label.substring(0, 12) + '...' : item.label;
 
-                                return (
-                                    <g key={item.id}>
-                                        <path d={createSegmentPath(index)} fill={color} stroke="#fff" strokeWidth="3" strokeLinejoin="round" />
+                                let textElement;
+                                if (textLayout === 'horizontal') {
+                                    // Horizontal layout
+                                    const angle = (index + 0.5) * segmentAngle - 90;
+                                    const outerTextRadius = radius * 0.85;
+                                    const innerTextRadius = radius * 0.35;
+
+                                    const startX = radius + outerTextRadius * Math.cos(angle * Math.PI / 180);
+                                    const startY = radius + outerTextRadius * Math.sin(angle * Math.PI / 180);
+                                    const endX = radius + innerTextRadius * Math.cos(angle * Math.PI / 180);
+                                    const endY = radius + innerTextRadius * Math.sin(angle * Math.PI / 180);
+
+                                    const textPathId = `textPath-${item.id}`;
+
+                                    textElement = (
+                                        <g key={`text-${item.id}`}>
+                                            <defs>
+                                                <path id={textPathId} d={`M ${startX} ${startY} L ${endX} ${endY}`} />
+                                            </defs>
+                                            <text fill={textColor} fontSize={calculatedFontSize} fontWeight="600">
+                                                <textPath href={`#${textPathId}`} startOffset="50%" textAnchor="middle">
+                                                    {displayLabel}
+                                                </textPath>
+                                            </text>
+                                        </g>
+                                    );
+                                } else {
+                                    // Radial layout
+                                    const textPos = getTextPosition(index);
+                                    textElement = (
                                         <text
                                             x={textPos.x}
                                             y={textPos.y}
@@ -467,8 +495,15 @@ function App() {
                                             dominantBaseline="middle"
                                             transform={`rotate(${textPos.angle}, ${textPos.x}, ${textPos.y})`}
                                         >
-                                            {item.label.length > 15 ? item.label.substring(0, 12) + '...' : item.label}
+                                            {displayLabel}
                                         </text>
+                                    );
+                                }
+
+                                return (
+                                    <g key={item.id}>
+                                        <path d={createSegmentPath(index)} fill={color} stroke="#fff" strokeWidth="3" strokeLinejoin="round" />
+                                        {textElement}
                                     </g>
                                 );
                             })}
@@ -551,6 +586,7 @@ function App() {
             const [buttonTextColor, setButtonTextColor] = useState('#ffffff');
             const [buttonBorderColor, setButtonBorderColor] = useState('#FFD700');
             const [buttonBorderWidth, setButtonBorderWidth] = useState(6);
+            const [textLayout, setTextLayout] = useState('horizontal');
 
             const handleSpinComplete = (item) => {
                 setWinner(item);
@@ -594,6 +630,7 @@ function App() {
                             buttonTextColor={buttonTextColor}
                             buttonBorderColor={buttonBorderColor}
                             buttonBorderWidth={buttonBorderWidth}
+                            textLayout={textLayout}
                         />
 
                         {winner && (
@@ -669,6 +706,26 @@ function App() {
                                 value={borderColor}
                                 onChange={(e) => setBorderColor(e.target.value)}
                             />
+                        </div>
+
+                        <div className="control-group">
+                            <label>Text Layout</label>
+                            <select
+                                value={textLayout}
+                                onChange={(e) => setTextLayout(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    border: '2px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    fontSize: '14px',
+                                    backgroundColor: 'white',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                <option value="radial">Radial (rotating text)</option>
+                                <option value="horizontal">Horizontal (edge to center)</option>
+                            </select>
                         </div>
 
                         <div className="section-title">Button Settings</div>
