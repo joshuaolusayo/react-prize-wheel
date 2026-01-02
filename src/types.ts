@@ -20,6 +20,7 @@ export interface SpinnerWheelProps {
   buttonTextColor?: string;
   buttonIcon?: React.ReactNode;
   buttonSize?: number; // Custom button radius (overrides default 0.25 * radius)
+  buttonFontSize?: number; // Custom button font size (if not provided, calculated based on button size)
   buttonBorderColor?: string;
   buttonBorderWidth?: number;
   disabled?: boolean;

@@ -22,6 +22,7 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
   buttonTextColor = "#fff",
   buttonIcon,
   buttonSize,
+  buttonFontSize,
   buttonBorderColor = "#333",
   buttonBorderWidth = 4,
   disabled = false,
@@ -39,7 +40,7 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
   const centerX = radius;
   const centerY = radius;
   const wheelRadius = radius - borderWidth;
-  const buttonRadius = buttonSize !== undefined ? buttonSize : radius * 0.25;
+  const buttonRadius = buttonSize !== undefined ? buttonSize : radius * 0.15;
   const segmentAngle = 360 / items.length;
 
   // Clean up animation on unmount
@@ -144,12 +145,12 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
     return items[index].textColor || "#fff";
   };
 
-  // Dynamic font size for many items
+  // Dynamic font size for many items - made smaller
   const dynamicFontSize = items.length > 20
-    ? Math.max(8, fontSize - Math.floor((items.length - 20) / 10) * 2)
+    ? Math.max(6, fontSize * 0.5 - Math.floor((items.length - 20) / 10) * 2)
     : items.length > 12
-    ? Math.max(10, fontSize - 2)
-    : fontSize;
+    ? Math.max(8, fontSize * 0.6)
+    : fontSize * 0.7;
 
   const renderSegments = () => {
     return items.map((item, index) => {
@@ -176,7 +177,7 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
       if (textLayout === "horizontal") {
         // Horizontal layout: text starts from edge towards center
         const outerTextRadius = wheelRadius * 0.85;
-        const innerTextRadius = wheelRadius * 0.35;
+        const innerTextRadius = wheelRadius * 0.25;
 
         // Calculate start position (at the edge)
         const startX = centerX + outerTextRadius * Math.cos(midAngle);
@@ -189,14 +190,16 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
         // Text path for horizontal text
         const textPathId = `textPath-${item.id}`;
 
-        // Truncate long labels
+        // Truncate long labels - more aggressive truncation
         let displayLabel = item.label;
-        if (items.length > 30 && displayLabel.length > 8) {
+        if (items.length > 30 && displayLabel.length > 6) {
+          displayLabel = displayLabel.substring(0, 5) + "...";
+        } else if (items.length > 20 && displayLabel.length > 8) {
           displayLabel = displayLabel.substring(0, 7) + "...";
-        } else if (items.length > 20 && displayLabel.length > 12) {
+        } else if (items.length > 12 && displayLabel.length > 10) {
+          displayLabel = displayLabel.substring(0, 9) + "...";
+        } else if (displayLabel.length > 12) {
           displayLabel = displayLabel.substring(0, 11) + "...";
-        } else if (items.length > 12 && displayLabel.length > 15) {
-          displayLabel = displayLabel.substring(0, 14) + "...";
         }
 
         textElement = (
@@ -233,14 +236,16 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
         const textY = centerY + textRadius * Math.sin(midAngle);
         const textAngle = (midAngle * 180) / Math.PI + 90;
 
-        // Truncate long labels
+        // Truncate long labels - more aggressive truncation
         let displayLabel = item.label;
-        if (items.length > 30 && displayLabel.length > 8) {
+        if (items.length > 30 && displayLabel.length > 6) {
+          displayLabel = displayLabel.substring(0, 5) + "...";
+        } else if (items.length > 20 && displayLabel.length > 8) {
           displayLabel = displayLabel.substring(0, 7) + "...";
-        } else if (items.length > 20 && displayLabel.length > 12) {
+        } else if (items.length > 12 && displayLabel.length > 10) {
+          displayLabel = displayLabel.substring(0, 9) + "...";
+        } else if (displayLabel.length > 12) {
           displayLabel = displayLabel.substring(0, 11) + "...";
-        } else if (items.length > 12 && displayLabel.length > 15) {
-          displayLabel = displayLabel.substring(0, 14) + "...";
         }
 
         textElement = (
@@ -339,7 +344,7 @@ export const SpinnerWheel: React.FC<SpinnerWheelProps> = ({
           backgroundColor: buttonColor,
           color: buttonTextColor,
           border: "none",
-          fontSize: buttonIcon ? "inherit" : fontSize * 1.2,
+          fontSize: buttonIcon ? "inherit" : (buttonFontSize !== undefined ? buttonFontSize : fontSize * 0.6),
           fontWeight: buttonIcon ? "normal" : "bold",
           cursor: disabled || isSpinning ? "not-allowed" : "pointer",
           opacity: disabled || isSpinning ? 0.6 : 1,

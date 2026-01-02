@@ -352,6 +352,7 @@ function App() {
             buttonTextColor = '#fff',
             buttonBorderColor = '#FFD700',
             buttonBorderWidth = 4,
+            buttonFontSize,
             disabled = false,
             winningIndex,
             textLayout = 'horizontal'
@@ -417,7 +418,7 @@ function App() {
 
             const segmentAngle = 360 / items.length;
             const radius = size / 2;
-            const innerRadius = size * 0.15;
+            const innerRadius = size * 0.08;
 
             const createSegmentPath = (index) => {
                 const startAngle = (index * segmentAngle - 90) * (Math.PI / 180);
@@ -444,7 +445,12 @@ function App() {
                 return { x, y, angle: angle + 90 };
             };
 
-            const calculatedFontSize = items.length > 12 ? Math.max(10, fontSize - (items.length - 12)) : fontSize;
+            // Dynamic font size for many items - made smaller
+            const calculatedFontSize = items.length > 20
+                ? Math.max(6, fontSize * 0.5 - Math.floor((items.length - 20) / 10) * 2)
+                : items.length > 12
+                ? Math.max(8, fontSize * 0.6)
+                : fontSize * 0.7;
 
             return (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
@@ -453,14 +459,25 @@ function App() {
                             {items.map((item, index) => {
                                 const color = item.color || `hsl(${(index * 360) / items.length}, 70%, 60%)`;
                                 const textColor = item.textColor || '#fff';
-                                const displayLabel = item.label.length > 15 ? item.label.substring(0, 12) + '...' : item.label;
+
+                                // Truncate long labels - more aggressive truncation
+                                let displayLabel = item.label;
+                                if (items.length > 30 && displayLabel.length > 6) {
+                                    displayLabel = displayLabel.substring(0, 5) + "...";
+                                } else if (items.length > 20 && displayLabel.length > 8) {
+                                    displayLabel = displayLabel.substring(0, 7) + "...";
+                                } else if (items.length > 12 && displayLabel.length > 10) {
+                                    displayLabel = displayLabel.substring(0, 9) + "...";
+                                } else if (displayLabel.length > 12) {
+                                    displayLabel = displayLabel.substring(0, 11) + "...";
+                                }
 
                                 let textElement;
                                 if (textLayout === 'horizontal') {
                                     // Horizontal layout
                                     const angle = (index + 0.5) * segmentAngle - 90;
                                     const outerTextRadius = radius * 0.85;
-                                    const innerTextRadius = radius * 0.35;
+                                    const innerTextRadius = radius * 0.25;
 
                                     const startX = radius + outerTextRadius * Math.cos(angle * Math.PI / 180);
                                     const startY = radius + outerTextRadius * Math.sin(angle * Math.PI / 180);
@@ -535,7 +552,7 @@ function App() {
                         >
                             <span style={{
                                 color: buttonTextColor,
-                                fontSize: innerRadius * 0.4,
+                                fontSize: buttonFontSize !== undefined ? buttonFontSize : innerRadius * 0.28,
                                 fontWeight: 'bold',
                                 userSelect: 'none',
                             }}>
@@ -586,6 +603,7 @@ function App() {
             const [buttonTextColor, setButtonTextColor] = useState('#ffffff');
             const [buttonBorderColor, setButtonBorderColor] = useState('#FFD700');
             const [buttonBorderWidth, setButtonBorderWidth] = useState(6);
+            const [buttonFontSize, setButtonFontSize] = useState(12);
             const [textLayout, setTextLayout] = useState('horizontal');
 
             const handleSpinComplete = (item) => {
@@ -630,6 +648,7 @@ function App() {
                             buttonTextColor={buttonTextColor}
                             buttonBorderColor={buttonBorderColor}
                             buttonBorderWidth={buttonBorderWidth}
+                            buttonFontSize={buttonFontSize}
                             textLayout={textLayout}
                         />
 
@@ -776,6 +795,19 @@ function App() {
                                 max="12"
                                 value={buttonBorderWidth}
                                 onChange={(e) => setButtonBorderWidth(Number(e.target.value))}
+                            />
+                        </div>
+
+                        <div className="control-group">
+                            <label>
+                                Button Font Size: <span className="value-display">{buttonFontSize}px</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="6"
+                                max="24"
+                                value={buttonFontSize}
+                                onChange={(e) => setButtonFontSize(Number(e.target.value))}
                             />
                         </div>
 
